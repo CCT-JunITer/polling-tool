@@ -1,0 +1,72 @@
+<template>
+  <v-container class="poll">
+    <v-space />
+    <LogoutButton />
+    <h4>🤨 Umfrage</h4>
+    <v-divider short />
+    <v-row>
+      <span v-if="question !== 'undefined'">{{ question }}</span>
+      <span v-else>Es gibt momentan keine Umfragen.</span>
+    </v-row>
+    <v-space />
+    <v-row v-if="question !== 'undefined'">
+      <PollAnswer answer="👍 Ja" @update-button="updateButton($event)" />
+      <PollAnswer answer="👎 Nein" @update-button="updateButton($event)" />
+    </v-row>
+
+    <v-space />
+    <v-row v-if="question !== 'undefined'">
+      <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Absenden</v-btn>
+    </v-row>
+
+    <v-toast success id="feedback" style="visibility: hidden;">
+      Vielen Dank für deine Teilnahme!
+      <v-link c href="/result">Zum Resultat</v-link>
+    </v-toast>
+  </v-container>
+</template>
+
+<script>
+import axios from 'axios';
+import PollAnswer from '@/components/PollAnswer.vue';
+import LogoutButton from '@/components/LogoutButton.vue';
+
+export default {
+  components: {
+    PollAnswer,
+    LogoutButton,
+  },
+  data: () => {
+    return {
+      disabled: true,
+      question: 'undefind',
+      answer: '',
+    };
+  },
+  mounted() {
+    axios.get('http://localhost:3000/poll').then((response) => {
+      this.question = response.data.question;
+    });
+  },
+  methods: {
+    updateButton(event) {
+      this.answer = event.split(' ');
+      if (this.disabled) this.disabled = !this.disabled;
+    },
+
+    handleSubmit() {
+      this.disabled = true;
+
+      if (this.answer[2] === 'Ja') {
+        axios.post('http://localhost:3000/poll/add').then(() => {
+          document.getElementById('feedback').style.visibility = 'visible';
+        });
+      } else {
+        axios.post('http://localhost:3000/poll/remove').then(() => {
+          document.getElementById('feedback').style.visibility = 'visible';
+        });
+      }
+    },
+  },
+};
+</script>
