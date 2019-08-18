@@ -17,5 +17,11 @@ export default {
   components: {
     LoginForm,
   },
+
+  mounted() {
+    if (this.$cookies.get('access_token') && this.$cookies.get('logged_in')) {
+      this.$router.push('/poll');
+    }
+  },
 };
 </script>
