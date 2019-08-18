@@ -24,7 +24,7 @@
     </v-row>
 
     <v-row>
-      <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Submit</v-btn>
+      <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Umfrage stellen</v-btn>
     </v-row>
 
     <v-toast success id="feedback" style="visibility: hidden;">
