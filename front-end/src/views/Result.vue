@@ -2,11 +2,17 @@
   <v-container class="create-poll">
     <v-space />
     <LogoutButton />
-    <h4>🙇‍ Ergebnisse</h4>
+
+    <h4>
+      🙇‍ Ergebnisse
+      <span v-if="admin">(<v-link c href="#modal">Teilnehmer</v-link>)</span>
+    </h4>
     <v-divider short />
 
     <v-row>
-      <h6>{{ question === 'undefined' ? "Es gibt momentan keine Umfrage." : question }}</h6>
+      <h6 class="light">
+        {{ question === 'undefined' ? "Es gibt momentan keine Umfrage." : question }}
+      </h6>
     </v-row>
 
     <v-row v-if="question !== 'undefined'">
@@ -20,6 +26,12 @@
     <v-row center v-if="question !== 'undefined'">
       <pie-chart :chart-data="datacollection" />
     </v-row>
+
+    <v-modal large zoomOut title="Teilnehmer">
+      <v-modal-body>
+        <p>{{ whoVoted === '' ? "Noch hat keiner gevotet." : whoVoted }}</p>
+      </v-modal-body>
+    </v-modal>
   </v-container>
 </template>
 
@@ -35,6 +47,8 @@ export default {
   },
   data: () => {
     return {
+      admin: false,
+      whoVoted: '',
       question: '',
       yesVotes: 0,
       noVotes: 0,
@@ -56,6 +70,11 @@ export default {
         this.yesVotes = response.data.yesVotes;
         this.noVotes = response.data.noVotes;
 
+        this.whoVoted = '';
+        response.data.whoVoted.forEach((whoVoted) => {
+          this.whoVoted = this.whoVoted === '' ? whoVoted : `, ${whoVoted}`;
+        });
+
         this.datacollection = {
           labels: ['👍Ja', '👎Nein'],
           datasets: [
@@ -70,6 +89,14 @@ export default {
     },
   },
   mounted() {
+    axios.post('http://localhost:3000/check', {
+      token: this.$cookies.get('access_token'),
+    }).then((res) => {
+      if (res.data.success && res.data.admin) {
+        this.admin = true;
+      }
+    });
+
     this.getData();
     setInterval(this.getData, 1500);
   },

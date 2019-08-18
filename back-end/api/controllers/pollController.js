@@ -13,11 +13,13 @@ exports.getCurrentPoll = (req, res) => {
 
 exports.addVote = (req, res) => {
   poll.yesVotes++;
+  poll.whoVoted.push(req.body.name);
   res.json(poll);
 };
 
 exports.removeVote = (req, res) => {
   poll.noVotes++;
+  poll.whoVoted.push(req.body.name);
   res.json(poll);
 };
 
@@ -25,5 +27,6 @@ exports.end = (req, res) => {
   poll.question = 'undefined';
   poll.yesVotes = 0;
   poll.noVotes = 0;
+  poll.whoVoted = [];
   res.json({ success: true });
 }

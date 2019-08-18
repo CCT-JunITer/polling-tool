@@ -41,11 +41,20 @@ export default {
       disabled: true,
       question: 'undefind',
       answer: '',
+      username: '',
     };
   },
   mounted() {
     axios.get('http://localhost:3000/poll').then((response) => {
       this.question = response.data.question;
+    });
+
+    axios.post('http://localhost:3000/check', {
+      token: this.$cookies.get('access_token'),
+    }).then((res) => {
+      if (res.data.success) {
+        this.username = res.data.username;
+      }
     });
   },
   methods: {
@@ -58,7 +67,9 @@ export default {
       this.disabled = true;
 
       if (this.answer[2] === 'Ja') {
-        axios.post('http://localhost:3000/poll/add').then(() => {
+        axios.post('http://localhost:3000/poll/add', {
+          name: this.username,
+        }).then(() => {
           document.getElementById('feedback').style.visibility = 'visible';
         });
       } else {

@@ -15,7 +15,7 @@ exports.check = (req, res) => {
   for (let index in login.registeredUsers) {
     const user = login.registeredUsers[index];
     if (user.token === req.body.token) {
-      res.json({ success: true, admin: user.admin });
+      res.json({ success: true, admin: user.admin, username: user.username });
       return;
     }
   }
