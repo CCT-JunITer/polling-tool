@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import LogoutButton from '@/components/LogoutButton.vue';
 
 export default {
@@ -50,11 +49,11 @@ export default {
     };
   },
   mounted() {
-    axios.get('http://localhost:3000/poll').then((res) => {
+    this.$api.get('http://localhost:3000/poll').then((res) => {
       this.currentQuestion = res.data.question;
     });
 
-    axios.post('http://localhost:3000/check', {
+    this.$api.post('http://localhost:3000/check', {
       token: this.$cookies.get('access_token'),
     }).then((res) => {
       if (!res.data.success || !res.data.admin) {
@@ -71,7 +70,7 @@ export default {
       }
     },
     handleSubmit() {
-      axios.post('http://localhost:3000/poll', {
+      this.$api.post('http://localhost:3000/poll', {
         question: this.question,
       }).then(() => {
         document.getElementById('feedback').style.visibility = 'visible';
@@ -81,7 +80,7 @@ export default {
       this.question = '';
     },
     endPoll() {
-      axios.post('http://localhost:3000/poll/end');
+      this.$api.post('http://localhost:3000/poll/end');
     },
   },
 };

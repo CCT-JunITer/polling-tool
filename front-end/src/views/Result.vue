@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import LogoutButton from '@/components/LogoutButton.vue';
 import PieChart from '@/components/PieChart.vue';
 
@@ -65,7 +64,7 @@ export default {
   },
   methods: {
     getData() {
-      axios.get('http://localhost:3000/poll').then((response) => {
+      this.$api.get('http://localhost:3000/poll').then((response) => {
         this.question = response.data.question;
         this.yesVotes = response.data.yesVotes;
         this.noVotes = response.data.noVotes;
@@ -89,7 +88,7 @@ export default {
     },
   },
   mounted() {
-    axios.post('http://localhost:3000/check', {
+    this.$api.post('http://localhost:3000/check', {
       token: this.$cookies.get('access_token'),
     }).then((res) => {
       if (res.data.success && res.data.admin) {

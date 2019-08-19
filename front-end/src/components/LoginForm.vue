@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data: () => {
     return {
@@ -53,7 +51,7 @@ export default {
       }
     },
     handleLoginClick() {
-      axios.post('http://localhost:3000/login', {
+      this.$api.post('http://localhost:3000/login', {
         username: this.email,
         password: this.password,
       }).then((res) => {

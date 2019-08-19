@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import PollAnswer from '@/components/PollAnswer.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
 
@@ -51,11 +50,11 @@ export default {
     };
   },
   mounted() {
-    axios.get('http://localhost:3000/poll').then((response) => {
+    this.$api.get('http://localhost:3000/poll').then((response) => {
       this.question = response.data.question;
       const { whoVoted } = response.data;
 
-      axios.post('http://localhost:3000/check', {
+      this.$api.post('http://localhost:3000/check', {
         token: this.$cookies.get('access_token'),
       }).then((res) => {
         if (res.data.success) {
@@ -80,13 +79,13 @@ export default {
       this.disabled = true;
 
       if (this.answer[2] === 'Ja') {
-        axios.post('http://localhost:3000/poll/add', {
+        this.$api.post('http://localhost:3000/poll/add', {
           name: this.username,
         }).then(() => {
           document.getElementById('feedback').style.visibility = 'visible';
         });
       } else {
-        axios.post('http://localhost:3000/poll/remove').then(() => {
+        this.$api.post('http://localhost:3000/poll/remove').then(() => {
           document.getElementById('feedback').style.visibility = 'visible';
         });
       }
