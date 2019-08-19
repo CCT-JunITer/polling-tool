@@ -9,18 +9,23 @@
       <span v-else>Es gibt momentan keine Umfragen.</span>
     </v-row>
     <v-space />
-    <v-row v-if="question !== 'undefined'">
+    <v-row v-if="question !== 'undefined' && !hasAlreadyVoted">
       <PollAnswer answer="👍 Ja" @update-button="updateButton($event)" />
       <PollAnswer answer="👎 Nein" @update-button="updateButton($event)" />
     </v-row>
 
     <v-space />
-    <v-row v-if="question !== 'undefined'">
+    <v-row v-if="question !== 'undefined' && !hasAlreadyVoted">
       <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Absenden</v-btn>
     </v-row>
 
     <v-toast success id="feedback" style="visibility: hidden;">
       Vielen Dank für deine Teilnahme!
+      <v-link c href="/result">Zum Resultat</v-link>
+    </v-toast>
+
+    <v-toast success v-if="hasAlreadyVoted">
+      Du hast schon für diese Umfrage abgestimmt!
       <v-link c href="/result">Zum Resultat</v-link>
     </v-toast>
   </v-container>
@@ -42,19 +47,27 @@ export default {
       question: 'undefind',
       answer: '',
       username: '',
+      hasAlreadyVoted: false,
     };
   },
   mounted() {
     axios.get('http://localhost:3000/poll').then((response) => {
       this.question = response.data.question;
-    });
+      const { whoVoted } = response.data;
 
-    axios.post('http://localhost:3000/check', {
-      token: this.$cookies.get('access_token'),
-    }).then((res) => {
-      if (res.data.success) {
-        this.username = res.data.username;
-      }
+      axios.post('http://localhost:3000/check', {
+        token: this.$cookies.get('access_token'),
+      }).then((res) => {
+        if (res.data.success) {
+          this.username = res.data.username;
+
+          const filteredWhoVoted = whoVoted
+            .filter(who => who.toLowerCase() === this.username.toLowerCase());
+          if (filteredWhoVoted.length !== 0) {
+            this.hasAlreadyVoted = true;
+          }
+        }
+      });
     });
   },
   methods: {
