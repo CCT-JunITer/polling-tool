@@ -19,6 +19,7 @@ exports.vote = (req, res) => {
       answer.votes += 1;
     }
   }
+  poll.whoVoted.push(req.body.name);
   res.json(poll);
 };
 
