@@ -10,8 +10,12 @@
     </v-row>
     <v-space />
     <v-row v-if="question !== 'undefined' && !hasAlreadyVoted">
-      <PollAnswer answer="👍 Ja" @update-button="updateButton($event)" />
-      <PollAnswer answer="👎 Nein" @update-button="updateButton($event)" />
+      <PollAnswer
+        v-for="answer in answers"
+        :key="answer.answer"
+        :answer="answer.answer"
+        @update-button="updateButton($event)"
+      />
     </v-row>
 
     <v-space />
@@ -47,11 +51,13 @@ export default {
       answer: '',
       username: '',
       hasAlreadyVoted: false,
+      answers: [],
     };
   },
   mounted() {
     this.$api.get('http://localhost:3000/poll').then((response) => {
       this.question = response.data.question;
+      this.answers = response.data.answers;
       const { whoVoted } = response.data;
 
       this.$api.post('http://localhost:3000/check', {
@@ -71,24 +77,19 @@ export default {
   },
   methods: {
     updateButton(event) {
-      this.answer = event.split(' ');
+      this.answer = event;
       if (this.disabled) this.disabled = !this.disabled;
     },
 
     handleSubmit() {
       this.disabled = true;
 
-      if (this.answer[2] === 'Ja') {
-        this.$api.post('http://localhost:3000/poll/add', {
-          name: this.username,
-        }).then(() => {
-          document.getElementById('feedback').style.visibility = 'visible';
-        });
-      } else {
-        this.$api.post('http://localhost:3000/poll/remove').then(() => {
-          document.getElementById('feedback').style.visibility = 'visible';
-        });
-      }
+      this.$api.post('http://localhost:3000/poll/vote', {
+        name: this.username,
+        answer: this.answer,
+      }).then(() => {
+        document.getElementById('feedback').style.visibility = 'visible';
+      });
     },
   },
 };

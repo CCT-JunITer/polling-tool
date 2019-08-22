@@ -27,7 +27,7 @@
       <v-col c6>
         <p>Antwortmöglichkeiten (leer lassen für Ja/Nein Antworten)</p>
         <div v-for="i in answerAmount" :key="i" class="input-control">
-          <input type="text" placeholder="Antwort">
+          <input :id="'answer' + i" type="text" placeholder="Antwort">
         </div>
         <p>
           <a href="#!" class="u u-C" @click="handleAddAnswer">
@@ -98,8 +98,28 @@ export default {
       }
     },
     handleSubmit() {
+      let answers = [];
+      if (this.answerAmount !== 1) {
+        for (let i = 1; i <= this.answerAmount; i += 1) {
+          const answerElement = document.getElementById(`answer${i}`);
+          answers.push({ answer: answerElement.value, votes: 0 });
+        }
+      } else {
+        answers = [
+          {
+            answer: 'Ja',
+            votes: 0,
+          },
+          {
+            answer: 'Nein',
+            votes: 0,
+          },
+        ];
+      }
+
       this.$api.post('http://localhost:3000/poll', {
         question: this.question,
+        answers,
       }).then(() => {
         document.getElementById('feedback').style.visibility = 'visible';
       });

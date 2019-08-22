@@ -16,14 +16,12 @@
     </v-row>
 
     <v-row v-if="question !== 'undefined'">
-      <v-col c6>
-        <h5>📈 Ja - <span class="light">{{ yesVotes }}</span></h5>
-      </v-col>
-      <v-col c6>
-        <h5>📉 Nein - <span class="light">{{ noVotes }}</span></h5>
-      </v-col>
+      <h5 v-for="answer in answers" :key="answer.answer">
+        {{ answer.answer }} <span class="light"> - {{ answer.votes }}</span>
+      </h5>
     </v-row>
-    <v-row center v-if="question !== 'undefined'">
+
+    <v-row v-if="question !== 'undefined'">
       <pie-chart :chart-data="datacollection" />
     </v-row>
 
@@ -49,8 +47,8 @@ export default {
       admin: false,
       whoVoted: '',
       question: '',
-      yesVotes: 0,
-      noVotes: 0,
+      answers: [],
+      colors: [],
       datacollection: {
         labels: ['👍Ja', '👎Nein'],
         datasets: [
@@ -63,24 +61,46 @@ export default {
     };
   },
   methods: {
+    makeRandomColor() {
+      let c = '';
+      while (c.length < 6) {
+        c += (Math.random()).toString(16).substr(-6).substr(-1);
+      }
+      return `#${c}`;
+    },
+
     getData() {
       this.$api.get('http://localhost:3000/poll').then((response) => {
         this.question = response.data.question;
         this.yesVotes = response.data.yesVotes;
         this.noVotes = response.data.noVotes;
+        this.answers = response.data.answers;
+
+        if (this.colors.length === 0) {
+          for (let i = 0; i < this.answers.length; i += 1) {
+            this.colors.push(this.makeRandomColor());
+          }
+        }
 
         this.whoVoted = '';
         response.data.whoVoted.forEach((whoVoted) => {
           this.whoVoted = this.whoVoted === '' ? whoVoted : `, ${whoVoted}`;
         });
 
+        const labels = [];
+        const votes = [];
+        for (let i = 0; i < this.answers.length; i += 1) {
+          labels.push(this.answers[i].answer);
+          votes.push(this.answers[i].votes);
+        }
+
         this.datacollection = {
-          labels: ['👍Ja', '👎Nein'],
+          labels,
           datasets: [
             {
               label: '⚡️Votes',
-              backgroundColor: ['#41B883', '#E46651'],
-              data: [this.yesVotes, this.noVotes],
+              backgroundColor: this.colors,
+              data: votes,
             },
           ],
         };

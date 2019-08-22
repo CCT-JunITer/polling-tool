@@ -5,11 +5,8 @@ module.exports = (app) => {
     .get(poll.getCurrentPoll)
     .post(poll.createPoll);
 
-  app.route('/poll/add')
-    .post(poll.addVote);
-
-  app.route('/poll/remove')
-    .post(poll.removeVote);
+  app.route('/poll/vote')
+    .post(poll.vote);
 
   app.route('/poll/end')
     .post(poll.end);
