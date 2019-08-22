@@ -24,6 +24,23 @@
     </v-row>
 
     <v-row>
+      <v-col c6>
+        <p>Antwortmöglichkeiten (leer lassen für Ja/Nein Antworten)</p>
+        <div v-for="i in answerAmount" :key="i" class="input-control">
+          <input type="text" placeholder="Antwort">
+        </div>
+        <p>
+          <a href="#!" class="u u-C" @click="handleAddAnswer">
+            <span style="font-size: 24px;">+</span>
+          </a>
+          <a href="#!" class="u u-C" @click="handleRemoveAnswer">
+            <span style="font-size: 24px;">-</span>
+          </a>
+        </p>
+      </v-col>
+    </v-row>
+
+    <v-row>
       <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Umfrage stellen</v-btn>
     </v-row>
 
@@ -46,6 +63,7 @@ export default {
       disabled: true,
       question: '',
       currentQuestion: '',
+      answerAmount: 1,
     };
   },
   mounted() {
@@ -62,6 +80,16 @@ export default {
     });
   },
   methods: {
+    handleAddAnswer() {
+      if (this.answerAmount < 5) {
+        this.answerAmount += 1;
+      }
+    },
+    handleRemoveAnswer() {
+      if (this.answerAmount > 1) {
+        this.answerAmount -= 1;
+      }
+    },
     checkChange() {
       if (this.question.length !== 0) {
         this.disabled = false;
