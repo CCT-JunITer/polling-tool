@@ -6,7 +6,7 @@
     <v-divider short />
     <v-row>
       <span v-if="question !== 'undefined'">{{ question }}</span>
-      <span v-else>Es gibt momentan keine Umfragen.</span>
+      <h6 class="light" v-else>Es gibt momentan keine Umfragen.</h6>
     </v-row>
     <v-space />
     <v-row v-if="question !== 'undefined' && !hasAlreadyVoted">
