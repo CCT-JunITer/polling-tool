@@ -26,9 +26,6 @@
       </v-col>
     </v-row>
 
-    <v-row center v-if="question !== 'undefined'">
-    </v-row>
-
     <v-modal large zoomOut title="Teilnehmer">
       <v-modal-body>
         <p>{{ whoVoted === '' ? "Noch hat keiner gevotet." : whoVoted }}</p>
