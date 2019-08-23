@@ -27,4 +27,10 @@ export default {
     height: 250px !important;
   }
 }
+@media only screen and (min-width: 800px) {
+  #pie-chart {
+    width: 500px !important;
+    height: 500px !important;
+  }
+}
 </style>

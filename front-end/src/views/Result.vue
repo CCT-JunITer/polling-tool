@@ -21,7 +21,7 @@
       </h5>
     </v-row>
 
-    <v-row v-if="question !== 'undefined'">
+    <v-row center v-if="question !== 'undefined'">
       <pie-chart :chart-data="datacollection" />
     </v-row>
 
