@@ -15,14 +15,18 @@
       </h6>
     </v-row>
 
-    <v-row v-if="question !== 'undefined'">
-      <h5 v-for="answer in answers" :key="answer.answer">
-        {{ answer.answer }} <span class="light"> - {{ answer.votes }}</span>
-      </h5>
+    <v-row v-if="question !== 'undefined'" level>
+      <v-col c6>
+        <h5 v-for="answer in answers" :key="answer.answer">
+          {{ answer.answer }} <span class="light"> - {{ answer.votes }}</span>
+        </h5>
+      </v-col>
+      <v-col c6>
+        <pie-chart :chart-data="datacollection" />
+      </v-col>
     </v-row>
 
     <v-row center v-if="question !== 'undefined'">
-      <pie-chart :chart-data="datacollection" />
     </v-row>
 
     <v-modal large zoomOut title="Teilnehmer">
@@ -121,3 +125,9 @@ export default {
   },
 };
 </script>
+
+<style>
+#modal .modal-content {
+  min-width: 300px;
+}
+</style>
