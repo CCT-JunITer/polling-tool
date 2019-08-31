@@ -1,15 +1,28 @@
-const registeredUsers = [{
-  username: 'admin',
-  password: 'admin',
-  admin: true,
-  token: 'abc123abc123abc123',
-}, {
-  username: 'test',
-  password: 'test',
-  admin: false,
-  token: 'ajdi09qfifejankv20i3r',
-}];
+const fs = require('fs'); 
+const parse = require('csv-parse');
+
+const csvData = [];
+const registeredUsers = [];
+fs.createReadStream('api/models/data.csv')
+  .pipe(parse({ delimiter: ':' }))
+  .on('data', (csvrow) => {
+    csvData.push(csvrow);        
+  })
+  .on('end', () => {
+    csvData.forEach((data) => {
+      const email = data[0].split(',')[2].trim();
+      registeredUsers.push({
+        email,
+        password: '123',
+        admin: email === 'marc.moosreiner@cct-ev.de'
+          || email === 'philipp.klaege@cct-ev.de'
+          || email === 'daniel.koester@cct-ev.de'
+          || email === 'florian.woelki@cct-ev.de',
+        token: email,
+      });
+    });
+  });
 
 module.exports = {
   registeredUsers,
-}
+};

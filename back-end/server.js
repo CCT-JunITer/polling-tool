@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 const pollRoutes = require('./api/routes/pollRoutes');
 pollRoutes(app);
 
+require('./api/models/loginModel');
 const loginRoutes = require('./api/routes/loginRoutes');
 loginRoutes(app);
 

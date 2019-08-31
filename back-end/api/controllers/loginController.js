@@ -3,7 +3,7 @@ let login = require('../models/loginModel');
 exports.login = (req, res) => {
   for (let index in login.registeredUsers) {
     const user = login.registeredUsers[index];
-    if (user.username === req.body.username && user.password === req.body.password) {
+    if (user.email === req.body.email && user.password === req.body.password) {
       res.json({ success: true, admin: user.admin, token: user.token });
       return;
     }
@@ -15,7 +15,7 @@ exports.check = (req, res) => {
   for (let index in login.registeredUsers) {
     const user = login.registeredUsers[index];
     if (user.token === req.body.token) {
-      res.json({ success: true, admin: user.admin, username: user.username });
+      res.json({ success: true, admin: user.admin, email: user.email });
       return;
     }
   }
