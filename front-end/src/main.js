@@ -8,7 +8,10 @@ import store from './store';
 import 'vue-cirrus/dist/vue-cirrus.css';
 import 'vue-cirrus';
 
-Vue.prototype.$api = axios;
+const ajax = axios.create({
+  baseURL: (process.env.NODE_ENV === 'development' ? 'http://localhost:3000/' : ''),
+});
+Vue.prototype.$api = ajax;
 
 Vue.use(VueCookies);
 Vue.config.productionTip = false;

@@ -1,5 +1,5 @@
 <template>
-  <v-btn small :onClick="handleLogout">Logout</v-btn>
+  <v-btn small @click="handleLogout">Logout</v-btn>
 </template>
 
 <script>

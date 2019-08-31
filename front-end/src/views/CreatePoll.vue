@@ -41,7 +41,7 @@
     </v-row>
 
     <v-row>
-      <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Umfrage stellen</v-btn>
+      <v-btn success :disabled="disabled" @click="handleSubmit">Umfrage stellen</v-btn>
     </v-row>
 
     <v-toast success id="feedback" style="visibility: hidden;">
@@ -67,11 +67,11 @@ export default {
     };
   },
   mounted() {
-    this.$api.get('http://localhost:3000/poll').then((res) => {
+    this.$api.get('poll').then((res) => {
       this.currentQuestion = res.data.question;
     });
 
-    this.$api.post('http://localhost:3000/check', {
+    this.$api.post('check', {
       token: this.$cookies.get('access_token'),
     }).then((res) => {
       if (!res.data.success || !res.data.admin) {
@@ -98,37 +98,39 @@ export default {
       }
     },
     handleSubmit() {
-      let answers = [];
-      if (this.answerAmount !== 1) {
-        for (let i = 1; i <= this.answerAmount; i += 1) {
-          const answerElement = document.getElementById(`answer${i}`);
-          answers.push({ answer: answerElement.value, votes: 0 });
+      if (!this.disabled) {
+        let answers = [];
+        if (this.answerAmount !== 1) {
+          for (let i = 1; i <= this.answerAmount; i += 1) {
+            const answerElement = document.getElementById(`answer${i}`);
+            answers.push({ answer: answerElement.value, votes: 0 });
+          }
+        } else {
+          answers = [
+            {
+              answer: 'Ja',
+              votes: 0,
+            },
+            {
+              answer: 'Nein',
+              votes: 0,
+            },
+          ];
         }
-      } else {
-        answers = [
-          {
-            answer: 'Ja',
-            votes: 0,
-          },
-          {
-            answer: 'Nein',
-            votes: 0,
-          },
-        ];
+
+        this.$api.post('poll', {
+          question: this.question,
+          answers,
+        }).then(() => {
+          document.getElementById('feedback').style.visibility = 'visible';
+        });
+
+        this.disabled = true;
+        this.question = '';
       }
-
-      this.$api.post('http://localhost:3000/poll', {
-        question: this.question,
-        answers,
-      }).then(() => {
-        document.getElementById('feedback').style.visibility = 'visible';
-      });
-
-      this.disabled = true;
-      this.question = '';
     },
     endPoll() {
-      this.$api.post('http://localhost:3000/poll/end');
+      this.$api.post('poll/end');
     },
   },
 };

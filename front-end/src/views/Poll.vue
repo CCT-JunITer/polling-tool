@@ -6,30 +6,27 @@
     <v-divider short />
     <v-row>
       <span v-if="question !== 'undefined'">{{ question }}</span>
-      <h6 class="light" v-else>Es gibt momentan keine Umfragen.</h6>
+      <h6 class="font-light" v-else>Es gibt momentan keine Umfragen.</h6>
     </v-row>
     <v-space />
     <v-row v-if="question !== 'undefined' && !hasAlreadyVoted">
-      <PollAnswer
-        v-for="answer in answers"
-        :key="answer.answer"
-        :answer="answer.answer"
-        @update-button="updateButton($event)"
-      />
+      <v-col>
+        <PollAnswer
+          v-for="answer in answers"
+          :key="answer.answer"
+          :answer="answer.answer"
+          @update-button="updateButton($event)"
+        />
+      </v-col>
     </v-row>
 
     <v-space />
     <v-row v-if="question !== 'undefined' && !hasAlreadyVoted">
-      <v-btn class="submit" :disabled="disabled" :onClick="handleSubmit">Absenden</v-btn>
+      <v-btn success :disabled="disabled" @click="handleSubmit">Absenden</v-btn>
     </v-row>
-
-    <v-toast success id="feedback" style="visibility: hidden;">
-      Vielen Dank für deine Teilnahme!
-      <v-link c href="/result">Zum Resultat</v-link>
-    </v-toast>
 
     <v-toast success v-if="hasAlreadyVoted">
-      Du hast schon für diese Umfrage abgestimmt!
+      Du hast für diese Umfrage abgestimmt!
       <v-link c href="/result">Zum Resultat</v-link>
     </v-toast>
   </v-container>
@@ -55,16 +52,16 @@ export default {
     };
   },
   mounted() {
-    this.$api.get('http://localhost:3000/poll').then((response) => {
+    this.$api.get('poll').then((response) => {
       this.question = response.data.question;
       this.answers = response.data.answers;
       const { whoVoted } = response.data;
 
-      this.$api.post('http://localhost:3000/check', {
+      this.$api.post('check', {
         token: this.$cookies.get('access_token'),
       }).then((res) => {
         if (res.data.success) {
-          this.username = res.data.username;
+          this.username = res.data.email;
 
           const filteredWhoVoted = whoVoted
             .filter(who => who.toLowerCase() === this.username.toLowerCase());
@@ -82,14 +79,16 @@ export default {
     },
 
     handleSubmit() {
-      this.disabled = true;
+      if (!this.disabled && !this.hasAlreadyVoted) {
+        this.disabled = true;
 
-      this.$api.post('http://localhost:3000/poll/vote', {
-        name: this.username,
-        answer: this.answer,
-      }).then(() => {
-        document.getElementById('feedback').style.visibility = 'visible';
-      });
+        this.$api.post('poll/vote', {
+          name: this.username,
+          answer: this.answer,
+        }).then(() => {
+          this.hasAlreadyVoted = true;
+        });
+      }
     },
   },
 };

@@ -6,6 +6,10 @@ import Poll from './views/Poll.vue';
 import CreatePoll from './views/CreatePoll.vue';
 import Result from './views/Result.vue';
 
+const ajax = axios.create({
+  baseURL: (process.env.NODE_ENV === 'development' ? 'http://localhost:3000/' : ''),
+});
+
 Vue.use(Router);
 
 const router = new Router({
@@ -51,7 +55,7 @@ router.beforeEach((to, from, next) => {
     if (loggedIn !== null && loggedIn === 1) {
       next();
     } else {
-      axios.post('http://localhost:3000/check', {
+      ajax.post('check', {
         token: accessToken,
       }).then((res) => {
         if (res.data.success) {

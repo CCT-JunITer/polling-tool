@@ -1,10 +1,8 @@
 <template>
   <v-container>
-    <img class="center" src="../assets/logo.png" alt="cct-logo" width="125" height="125">
-    <div class="title-content">
-      <h1 class="center">Login</h1>
-      <p class="center">Umfragetool</p>
-    </div>
+    <img class="u-center" src="../assets/logo.png" alt="cct-logo" width="125" height="125">
+    <h1 class="u-center">Login</h1>
+    <p class="u-center">Umfragetool</p>
 
     <LoginForm />
   </v-container>

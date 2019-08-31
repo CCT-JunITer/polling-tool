@@ -10,18 +10,20 @@
     <v-divider short />
 
     <v-row>
-      <h6 class="light">
-        {{ question === 'undefined' ? "Es gibt momentan keine Umfrage." : question }}
-      </h6>
+      <v-col>
+        <h6 class="font-light">
+          {{ question === 'undefined' ? "Es gibt momentan keine Umfrage." : question }}
+        </h6>
+      </v-col>
     </v-row>
 
     <v-row v-if="question !== 'undefined'" level>
-      <v-col c6>
+      <v-col c4>
         <h5 v-for="answer in answers" :key="answer.answer">
           {{ answer.answer }} <span class="light"> - {{ answer.votes }}</span>
         </h5>
       </v-col>
-      <v-col c6>
+      <v-col c8 center>
         <pie-chart :chart-data="datacollection" />
       </v-col>
     </v-row>
@@ -71,7 +73,7 @@ export default {
     },
 
     getData() {
-      this.$api.get('http://localhost:3000/poll').then((response) => {
+      this.$api.get('poll').then((response) => {
         this.question = response.data.question;
         this.yesVotes = response.data.yesVotes;
         this.noVotes = response.data.noVotes;
@@ -84,8 +86,8 @@ export default {
         }
 
         this.whoVoted = '';
-        response.data.whoVoted.forEach((whoVoted) => {
-          this.whoVoted = this.whoVoted === '' ? whoVoted : `, ${whoVoted}`;
+        response.data.whoVoted.forEach((who) => {
+          this.whoVoted = this.whoVoted === '' ? who : `${this.whoVoted}, ${who}`;
         });
 
         const labels = [];
@@ -109,7 +111,7 @@ export default {
     },
   },
   mounted() {
-    this.$api.post('http://localhost:3000/check', {
+    this.$api.post('check', {
       token: this.$cookies.get('access_token'),
     }).then((res) => {
       if (res.data.success && res.data.admin) {

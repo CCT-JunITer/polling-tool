@@ -8,13 +8,10 @@
 </template>
 
 <style lang="scss">
-button.submit {
-  background-color: #3498db;
-  color: white;
-}
-button.submit:disabled {
+button.u-disabled {
   cursor: not-allowed;
   background-color: #d7d7da;
+  border: #d7d7da;
   color: #fff;
 }
 </style>
