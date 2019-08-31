@@ -27,7 +27,14 @@
       <v-col c6>
         <p>Antwortmöglichkeiten (leer lassen für Ja/Nein Antworten)</p>
         <div v-for="i in answerAmount" :key="i" class="input-control">
-          <input :id="'answer' + i" type="text" placeholder="Antwort">
+          <input
+            v-if="i === answerAmount"
+            :id="'answer' + i"
+            type="text"
+            placeholder="Antwort"
+            @keyup.enter="handleEnter"
+          >
+          <input v-else :id="'answer' + i" type="text" placeholder="Antwort">
         </div>
         <p>
           <a href="#!" class="u u-C" @click="handleAddAnswer">
@@ -80,6 +87,12 @@ export default {
     });
   },
   methods: {
+    handleEnter() {
+      this.handleAddAnswer();
+      setTimeout(() => {
+        document.getElementById(`answer${this.answerAmount}`).focus();
+      }, 10);
+    },
     handleAddAnswer() {
       if (this.answerAmount < 5) {
         this.answerAmount += 1;
