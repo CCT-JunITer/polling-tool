@@ -5,14 +5,13 @@
     <h4>Umfrage erstellen</h4>
     <v-divider short />
 
-    <v-row v-if="currentQuestion !== 'undefined'">
+    <div v-if="currentQuestion !== 'undefined' && currentQuestion !== ''">
       <p>
-        Momentan gibt es schon eine Umfrage: <b>{{ currentQuestion }}</b><br/>
-        <v-link c href="/poll">Zur Umfrage</v-link>
-        <!-- TODO: Change when new version of vue-cirrus is out -->
-        <a href="" class="u u-C" @click="endPoll">Umfrage beenden</a>
+        Momentan gibt es schon eine Umfrage:
+        <b>{{ currentQuestion }}</b> (<v-link href="/poll" link>Zur Umfrage</v-link>)<br/>
       </p>
-    </v-row>
+      <v-btn small danger @click="endPoll">Umfrage beenden</v-btn>
+    </div>
 
     <v-row>
       <v-col c6>
@@ -55,6 +54,8 @@
       Du hast erfolgreich diese Umfrage gestellt!
       <v-link c href="/poll">Zur Umfrage</v-link>
     </v-toast>
+
+    <v-snackbar topCenter v-model="feedbackSnackbar">Umfrage beendet!</v-snackbar>
   </v-container>
 </template>
 
@@ -67,6 +68,7 @@ export default {
   },
   data: () => {
     return {
+      feedbackSnackbar: false,
       disabled: true,
       question: '',
       currentQuestion: '',
@@ -144,6 +146,8 @@ export default {
     },
     endPoll() {
       this.$api.post('poll/end');
+      this.currentQuestion = '';
+      this.feedbackSnackbar = !this.feedbackSnackbar;
     },
   },
 };
