@@ -7,7 +7,7 @@ import CreatePoll from './views/CreatePoll.vue';
 import Result from './views/Result.vue';
 
 const ajax = axios.create({
-  baseURL: (process.env.NODE_ENV === 'development' ? 'http://localhost:3000/' : ''),
+  baseURL: (process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : '/api'),
 });
 
 Vue.use(Router);
